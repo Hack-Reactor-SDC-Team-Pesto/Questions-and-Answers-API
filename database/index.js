@@ -6,15 +6,18 @@ const session = driver.session()
 console.log('TEST', {driver: session})
 
 
-// test = () => {
-//   console.log('TEST FROM DATABASE')
-// }
+const getAllQ = async (product_id) => {
+  const session = this.driver.session()
+  const res = await session.getAllQ(tx => {
+    return tx.run(
+      `MATCH (:Product {product_id: ${product_id})--(q:Question)
+      RETURN q LIMIT 500`
+    )
+  })
+  await session.close()
+}
 
 
-// on application exit:
-// await driver.close()
-
-
-module.exports = {}
+module.exports = {getAllQ}
 
 
