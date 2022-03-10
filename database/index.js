@@ -31,21 +31,21 @@ const getAlla = async (question_id) => {
   return res
 }
 
-const reportQ = async (question_Id) => {
+const reportQ = async (question_id) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (q:Question {question_id: ${question_id}) set q.reported = true`
+      `match (q:Question {question_id: ${question_id}}) set q.reported = true`
     )
   })
   await session.close()
 }
 
-const reportA = async (answer_Id) => {
+const reportA = async (answer_id) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (a:Answer {answer_id: ${answer_id}) set a.reported = true`
+      `match (a:Answer {answer_id: ${answer_id}}) set a.reported = true`
     )
   })
   await session.close()
@@ -53,9 +53,9 @@ const reportA = async (answer_Id) => {
 
 const helpfulQ = async (question_id) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (q:Question {question_id: ${question_id}) set q.question_helpfulness = +1`
+      `match (q:Question {question_id: ${question_id}}) set q.question_helpfulness = q.question_helpfulness+1`
     )
   })
   await session.close()
@@ -63,9 +63,9 @@ const helpfulQ = async (question_id) => {
 
 const helpfulA = async (answer_id) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (a:Answer {answer_id: ${answer_id}) set a.helpfulness = +1`
+      `match (a:Answer {answer_id: ${answer_id}}) set a.helpfulness = a.helpfulness+1`
     )
   })
   await session.close()
@@ -73,9 +73,9 @@ const helpfulA = async (answer_id) => {
 
 const addQ = async (question_body, asker_name, asker_email, product_id) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (p:Product {product_id: ${product_id}) merge (q:Question {question_id : count(q)+1}) set q.question_body = ${question_body}, q.asker_name = ${asker_name}, q.asker_email = ${asker_email}`
+      `match (p:Product) where p.product_id=${product_id} create (q:Question)-[:PRODUCT_QUESTION]->(p) set q.question_body='${question_body}', q.asker_name='${asker_name}', q.asker_email='${asker_email}', p.product_id=${product_id}`
     )
   })
   await session.close()
@@ -83,9 +83,9 @@ const addQ = async (question_body, asker_name, asker_email, product_id) => {
 
 const addA = async (question_id, answerer_name, answerer_email, body) => {
   const session = driver.session()
-  const res = await session.writeTransation(tx => {
+  const res = await session.writeTransaction(tx => {
     return tx.run(
-      `match (q:Question {question_id: ${question_id}) merge (a:Answer {answer_id : count(a)+1}) set a.body = ${body}, a.answerer_name = ${answerer_name}, a.answerer_email = ${answerer_email}`
+      `match (q:Question) where q.question_id=${question_id} create (a:Answer)-[:ANSWERS]->(q) set a.body='${body}', a.answerer_name='${answerer_name}', a.answerer_email='${answerer_email}', a.question_id=${question_id}`
     )
   })
   await session.close()
