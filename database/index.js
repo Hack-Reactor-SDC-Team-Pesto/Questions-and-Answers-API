@@ -1,7 +1,8 @@
 const neo4j = require('neo4j-driver')
+const {userName, passWord} = require("../config.js")
 // import neo4j from 'neo4j-driver'
 
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'G3niusch335e'))
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic(userName, passWord))
 
 // console.log('TEST', {driver: session})
 
